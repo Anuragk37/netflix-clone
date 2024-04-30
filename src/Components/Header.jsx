@@ -1,24 +1,42 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useContext } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from './Body'
 import { auth } from '../utils/firebase';
 import { signOut } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth";
 
 
 const Header = () => {
-   const [user,setUser] =useContext(UserContext)
    const navigate=useNavigate()
+   const user=auth.currentUser
 
    const handleSignOut =()=>{
       console.log("clicked")
       signOut(auth).then(() => {
-         setUser(null)
+
          navigate("/",{ replace: true })
        }).catch((error) => {
          console.log(error)
        });
    }
+
+
+
+      useEffect(()=>{
+         onAuthStateChanged(auth, (user) => {
+            if (user) {
+               // User is signed in, see docs for a list of available properties
+               // https://firebase.google.com/docs/reference/js/auth.user
+               const uid = user.uid;
+               navigate("/browse")
+               // ...
+            } else {
+               // User is signed out
+               // ...
+               navigate('/')
+            }
+            });
+      },[])
 
   return (
     <div className={`absolute w-full py-3 bg-gradient-to-b from-black z-10 flex justify-between ${user ? 'px-24' : 'px-40'}`}>

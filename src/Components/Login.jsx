@@ -3,18 +3,16 @@ import Header from './Header'
 import { formValidator } from '../utils/validator'
 import { createUserWithEmailAndPassword,signInWithEmailAndPassword, signOut,updateProfile } from "firebase/auth";
 import { auth } from '../utils/firebase';
-import { useNavigate } from 'react-router-dom';
 
 
 
-const Login = ({setUser}) => {
+
+const Login = () => {
    const [isLogin,setIsLogin]=useState(true)
    const [errorMessage,setErrorMessage]=useState(null)
    const email = useRef(null)
    const password = useRef(null)
    const fullName = useRef(null)
-   const navigate = useNavigate();
-
   
    const handleButtonClick=()=>{
       console.log(password.current.value)
@@ -26,11 +24,11 @@ const Login = ({setUser}) => {
 
       if(!isLogin){
          createUserWithEmailAndPassword(auth, email.current.value, password.current.value).then((userCredential) => {
-            setUser(userCredential.user);
+
             updateProfile(userCredential.user, {
                displayName: fullName.current.value
              }).then(() => {
-               navigate('/browse');
+               
              }).catch((error) => {
                setErrorMessage(error.message)
              })
@@ -45,10 +43,8 @@ const Login = ({setUser}) => {
       }else{
          signInWithEmailAndPassword(auth, email.current.value, password.current.value)
          .then((userCredential) => {
-            // Signed in 
-            setUser(userCredential.user)
             console.log(userCredential.user)
-            navigate('/browse');
+            
             // ...
          })
          .catch((error) => {
